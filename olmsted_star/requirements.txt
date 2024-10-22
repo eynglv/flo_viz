@@ -5,3 +5,5 @@ mkdocs
 pip
 python-dotenv
 -e .
+selenium==4.25.0
+mechanicalsoup==1.3.0
