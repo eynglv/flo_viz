@@ -1,6 +1,6 @@
 import mechanicalsoup
 from selenium import webdriver
-
+import re
 
 BASE_URL = "http://ww3.rediscov.com/Olmsted/default.asp?include=master.htm"
 
@@ -23,18 +23,24 @@ class Scraper:
         browser["FIELD1"] = job_number
         # add error handling
         response = browser.submit_selected()
-        self.parse_result(response.text)
+        print(self.parse_result(response.text))
     
     def parse_result(self, response):
         curr_page = self.browser.page
         parent_table = curr_page.select_one("table")
         rows = parent_table.select('tr')
+        project_info = {}
         for row in rows:
             if row.find('i') is None:
                 continue
             label = row.find('i').get_text(strip=True)
+            label = re.sub(r':$', '', label)
             value = row.find('b').get_text(strip=True)
-            print(label,value)
+            project_info[label] = value
+        return project_info
+    
+    def return_home(self):
+        self.browser.follow_link(self.browser.select_one(""))
         
 
 scraper = Scraper(BASE_URL)
