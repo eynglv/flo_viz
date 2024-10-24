@@ -1,35 +1,29 @@
 import mechanicalsoup
-from selenium import webdriver
 import re
-
-BASE_URL = "http://ww3.rediscov.com/Olmsted/default.asp?include=master.htm"
 
 class Scraper:
     def __init__(self, baseUrl):
         self.browser = mechanicalsoup.StatefulBrowser()
         self.baseUrl = baseUrl
-        
-    def get_browser(self):
-        return self.browser 
 
-    def load_browser(self):
-        browser = self.get_browser()
-        browser.open(self.baseUrl)
+    def open_browser(self):
+        self.browser.open(self.baseUrl)
     
-    def submitForm(self, job_number):
-        browser = self.get_browser()
+    def submit_form(self, job_number):
         # is this legal
-        browser.select_form('form[action="default.asp?IDCFile=/olmsted/genb.idc"]')
-        browser["FIELD1"] = job_number
+        self.browser.select_form('form[action="default.asp?IDCFile=/olmsted/genb.idc"]')
+        self.browser["FIELD1"] = job_number
         # add error handling
-        response = browser.submit_selected()
-        print(self.parse_result(response.text))
+        try:
+            response = self.browser.submit_selected()
+        except:
+            print(job_number + 'not founded')
     
-    def parse_result(self, response):
+    def parse_result(self):
         curr_page = self.browser.page
         parent_table = curr_page.select_one("table")
         rows = parent_table.select('tr')
-        project_info = {}
+        project_info = {} 
         for row in rows:
             if row.find('i') is None:
                 continue
@@ -43,6 +37,3 @@ class Scraper:
         self.browser.follow_link(self.browser.select_one(""))
         
 
-scraper = Scraper(BASE_URL)
-scraper.load_browser()
-scraper.submitForm("00516")
