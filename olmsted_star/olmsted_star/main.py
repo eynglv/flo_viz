@@ -60,8 +60,8 @@ def write_to_json_file(data, filename):
                 existing_data = []  
     else:
         existing_data = []
-
-    existing_data.append(data)
+    if len(data):
+        existing_data.append(data)
 
     with open(filename, 'w') as file:
         json.dump(existing_data, file, indent=4)

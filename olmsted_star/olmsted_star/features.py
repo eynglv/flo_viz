@@ -2,7 +2,6 @@ import overpy
 import os
 import json
 import sys
-import geojson
 
 from config import CATEGORIES, OUTPUT_PROCESSED_FILENAME
 
@@ -24,6 +23,8 @@ def fetch_overpy(query):
 def form_query(data):
     aggregator = ''
     for park in data:
+        if long_lat is None:
+            continue
         long_lat = str(park["long_lat"])
         base_string = f'way(around:300,{long_lat})["leisure"="park"];'
         aggregator+=base_string
