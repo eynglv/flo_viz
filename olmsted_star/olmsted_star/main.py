@@ -4,18 +4,14 @@ from processors.scraper import Scraper
 import sys
 import json
 import os
-from config import FILENAME, BASE_URL, OUTPUT_BASE_FILENAME, CATEGORIES
+from config import FILENAME, BASE_URL, OUTPUT_INTERIM_FILENAME, CATEGORIES
 
 def main(state, project_type):
-    dir_path = os.path.join(OUTPUT_BASE_FILENAME, state)
-    # make a directory of state name if not exist
-    os.makedirs(dir_path, exist_ok=True)
-    file_path = f'{CATEGORIES[project_type]}.json'
+    dir_path = create_state_subdirectory(OUTPUT_INTERIM_FILENAME, state)
+    file_name = f'{CATEGORIES[project_type]}.json'
 
     # load csv data
-    pd.options.display.max_rows = 10
-    carto_data = pd.read_csv(FILENAME)
-    data = pd.DataFrame(carto_data)
+    data = read_csv_data()
     
     # pass csv data to be processed
     processor = Data_Processor(data)
@@ -28,11 +24,18 @@ def main(state, project_type):
     # scrape!
     scraper = Scraper(BASE_URL)
     for job_num in nan_job_nums:
-        job_num = modify_job_num(job_num)
+        job_num = processor.zfill_job_num(job_num)
         results = main_scrape(scraper=scraper, job_num=job_num)
-        file_path = os.path.join(dir_path, file_path)
+        file_path = os.path.join(dir_path, file_name)
         write_to_json_file(results, file_path)
         print('Writing...', job_num)
+    scraper.browser.close()
+
+def read_csv_data():
+    pd.options.display.max_rows = 10
+    carto_data = pd.read_csv(FILENAME)
+    data = pd.DataFrame(carto_data)
+    return data
         
        
 def main_scrape(scraper, job_num):   
@@ -40,9 +43,13 @@ def main_scrape(scraper, job_num):
     scraper.submit_form(job_num)
     results = scraper.parse_result()
     return results
+
+def create_state_subdirectory(base_directory, directory_name):
+    dir_path = os.path.join(base_directory, directory_name)
+    # make a directory of state name if not exist
+    os.makedirs(dir_path, exist_ok=True)
+    return dir_path
     
-def modify_job_num(job_num):
-    return job_num.zfill(5)
 
 def write_to_json_file(data, filename):
     if os.path.exists(filename):
@@ -58,6 +65,7 @@ def write_to_json_file(data, filename):
 
     with open(filename, 'w') as file:
         json.dump(existing_data, file, indent=4)
+
 
 if __name__ == "__main__":
     _, state, project = sys.argv
