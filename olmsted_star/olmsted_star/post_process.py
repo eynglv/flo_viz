@@ -9,8 +9,8 @@ from main import create_state_subdirectory
 
 
 def main(state, project_type):
-    file_path = f'{CATEGORIES[project_type]}.json'
-    dir_path = os.path.join(OUTPUT_INTERIM_FILENAME, state, file_path)
+    file_name = f'{CATEGORIES[project_type]}.json'
+    dir_path = os.path.join(OUTPUT_INTERIM_FILENAME, state, file_name)
     with open(dir_path, 'r') as file:
         try:
             data = json.load(file)
