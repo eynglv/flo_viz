@@ -4,7 +4,7 @@ import pandas as pd
 import sys
 from processors.format import Data_Processor
 import json
-from main import create_state_subdirectory
+from olmsted_star.olmsted_star.main_parks import create_state_subdirectory
 
 
 
