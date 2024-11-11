@@ -10,10 +10,18 @@ class Data_Processor:
         return self.data
         
     def drop_columns(self, columns):
+        """_summary_
+
+        Args:
+            columns (_type_): array of strings
+        """
         self.data = self.data.drop(columns=columns)
     
     def rename_columns(self, name_map):
         self.data = self.data.rename(columns=name_map)
+    
+    def get_unique_columns(self, column):
+        return pd.Series(self.data[column]).unique()
         
     def filter_by(self, column_name, column_value):
         """
@@ -34,10 +42,14 @@ class Data_Processor:
     
     def get_job_numbers(self,data):
         return pd.Series(data['job_number'])
+
+    def filter_nan_dates(self):
+        self.data = self.data[self.data['date_range'].notna()]
     
+    # or get_start_year(row["correspondence_dates"])
     def filter_excess_date_range(self):
         return self.data[self.data.apply(
-    lambda row: (year := get_start_year(row["date_range"]) or get_start_year(row["correspondence_dates"])) is not None and year < self.cut_off_date,
+    lambda row: (year := get_start_year(row["date_range"])) is not None and year < self.cut_off_date,
     axis=1
 )]
     

@@ -1,10 +1,11 @@
 import pandas as pd
-from processors.format import Data_Processor
-from processors.scraper import Scraper
 import sys
 import json
 import os
-from config import FILENAME, BASE_URL, OUTPUT_INTERIM_FILENAME, CATEGORIES
+
+from ..processors.format import Data_Processor
+from ..processors.scraper import Scraper
+from ..config import FILENAME, BASE_URL, OUTPUT_INTERIM_FILENAME, CATEGORIES
 
 def main(state, project_type):
     dir_path = create_state_subdirectory(OUTPUT_INTERIM_FILENAME, state)
