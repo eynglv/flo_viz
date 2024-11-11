@@ -1,0 +1,30 @@
+superfluous_osm_columns=['id', '@id', 'dog', 'dog:conditional', 'leisure','operator',
+       'operator:short', 'operator:type', 'operator:wikidata', 'website',
+       'wikidata', 'wikipedia', 'addr:city', 'addr:housenumber',
+       'addr:postcode', 'addr:state', 'addr:street', 'name:en', 'name:ru',
+       'name:zh', 'opening_hours', 'phone', 'ele', 'gnis:feature_id',
+       'official_name', 'old_name', 'created_by', 'alt_name',
+       'operator:wikipedia', 'alt_wikidata', 'source', 'start_date',
+       'wikimedia_commons', 'acres', 'ref', 'access', 'check_date',
+       'description', 'name:el', 'smoking', 'architect',
+       'check_date:opening_hours', 'contact:facebook', 'contact:instagram',
+       'contact:pinterest', 'contact:tiktok', 'contact:twitter',
+       'contact:youtube', 'heritage', 'heritage:operator', 'heritage:website',
+       'name:be', 'name:fa', 'name:he', 'name:hi', 'name:ja', 'name:kn',
+       'name:ko', 'name:lt', 'name:sr', 'name:sr-Latn', 'name:tr',
+       'nrhp:inscription_date', 'nrhp:nhl', 'nrhp:nhl:inscription_date',
+       'owner', 'ref:nrhp', 'area', 'highway', 'noref', 'barrier', 'kerb',
+       'tactile_paving', 'entrance', 'crossing', 'crossing:island',
+       'crossing:markings', 'amenity', 'backrest', 'wheelchair', 'censusTract_state', 'censusTract_county', 'censusTract_tract']
+
+census_racial_groups = {
+    "P3_001N": "total_population",
+    "P3_002N": "white_alone",
+    "P3_003N": "black_or_african_american_alone",
+    "P3_004N": "american_indian_and_alaska_native_alone",
+    "P3_005N": "asian_alone",
+    "P3_006N": "native_hawaiian_and_other_pacific_islander_alone",
+    "P3_007N": "some_other_race_alone",
+    "P3_008N": "two_or_more_races",
+    "P4_003N": "hispanic_or_latino"
+}
