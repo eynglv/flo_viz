@@ -28,3 +28,58 @@ census_racial_groups = {
     "P3_008N": "two_or_more_races",
     "P4_003N": "hispanic_or_latino"
 }
+
+census_income_levels = {
+    "DP03_0051PE": 'total_households_income_benefits',
+    "DP03_0052PE": 'less_than_10',
+    "DP03_0053PE": '10_to_14',
+    "DP03_0054PE": '15_to_24',
+    "DP03_0055PE": '25_to_34', 
+    "DP03_0056PE": '35_to_49',
+    "DP03_0057PE": '50_to_74',
+    "DP03_0058PE": '75_to_99',
+    "DP03_0059PE": '100_to_149',
+    "DP03_0060PE": '150_to_199',
+    "DP03_0061PE": '200_or_more'
+}
+
+census_age_and_sex_groups = {
+    "S0101_C06_001E": "percent_female_total_population",
+    "S0101_C04_001E": "percent_male_total_population",
+    "S0101_C06_002E": "percent_female_under_5_years",
+    "S0101_C04_002E": "percent_male_under_5_years",
+    "S0101_C06_003E": "percent_female_5_to_9_years",
+    "S0101_C04_003E": "percent_male_5_to_9_years",
+    "S0101_C06_004E": "percent_female_10_to_14_years",
+    "S0101_C04_004E": "percent_male_10_to_14_years",
+    "S0101_C06_005E": "percent_female_15_to_19_years",
+    "S0101_C04_005E": "percent_male_15_to_19_years",
+    "S0101_C06_006E": "percent_female_20_to_24_years",
+    "S0101_C04_006E": "percent_male_20_to_24_years",
+    "S0101_C06_007E": "percent_female_25_to_29_years",
+    "S0101_C04_007E": "percent_male_25_to_29_years",
+    "S0101_C06_008E": "percent_female_30_to_34_years",
+    "S0101_C04_008E": "percent_male_30_to_34_years",
+    "S0101_C06_009E": "percent_female_35_to_39_years",
+    "S0101_C04_009E": "percent_male_35_to_39_years",
+    "S0101_C06_010E": "percent_female_40_to_44_years",
+    "S0101_C04_010E": "percent_male_40_to_44_years",
+    "S0101_C06_011E": "percent_female_45_to_49_years",
+    "S0101_C04_011E": "percent_male_45_to_49_years",
+    "S0101_C06_012E": "percent_female_50_to_54_years",
+    "S0101_C04_012E": "percent_male_50_to_54_years",
+    "S0101_C06_013E": "percent_female_55_to_59_years",
+    "S0101_C04_013E": "percent_male_55_to_59_years",
+    "S0101_C06_014E": "percent_female_60_to_64_years",
+    "S0101_C04_014E": "percent_male_60_to_64_years",
+    "S0101_C06_015E": "percent_female_65_to_69_years",
+    "S0101_C04_015E": "percent_male_65_to_69_years",
+    "S0101_C06_016E": "percent_female_70_to_74_years",
+    "S0101_C04_016E": "percent_male_70_to_74_years",
+    "S0101_C06_017E": "percent_female_75_to_79_years",
+    "S0101_C04_017E": "percent_male_75_to_79_years",
+    "S0101_C06_018E": "percent_female_80_to_84_years",
+    "S0101_C04_018E": "percent_male_80_to_84_years",
+    "S0101_C06_019E": "percent_female_85_years_and_over",
+    "S0101_C04_019E": "percent_male_85_years_and_over"
+}
