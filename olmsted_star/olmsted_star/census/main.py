@@ -3,6 +3,7 @@ import csv
 import re
 import pandas as pd
 import os
+import sys
 
 from references import states
 from ..config import OUTPUT_PROCESSED_FILENAME
@@ -19,19 +20,15 @@ from .reference import census_racial_groups, census_income_levels, census_age_an
 # https://api.census.gov/data/2022/acs/acs5/profile?get=DP03_0051PE,DP03_0052E&for=tract:021500&in=state:36%20county:061
 
 
-
-READ_FILE = os.path.join(OUTPUT_PROCESSED_FILENAME, "New York", 'base_data.csv')
-WRITE_FILE = os.path.join(OUTPUT_PROCESSED_FILENAME, "New York", 'age_and_sex_data.csv')
-
-
 HOST = "https://api.census.gov/data"
 
-def main():
-    data = read_csv_data()  
+def main(state, layer_type):
+    READ_FILE = os.path.join(OUTPUT_PROCESSED_FILENAME, state, 'base_data.csv')
+    data = read_csv_data(READ_FILE)  
     processor = Data_Processor(data)
     state_num = processor.get_unique_columns('STATEFP')[0]
-    # processor.drop_columns(superfluous_osm_columns) initial go
-    iterate_census_tracts(processor.data ,state_num)
+    WRITE_FILE = os.path.join(OUTPUT_PROCESSED_FILENAME, state, f"{layer_type}_data.csv")
+    iterate_census_tracts(processor.data ,state_num, layer_type, WRITE_FILE)
     
     
 # API METHODS
@@ -111,21 +108,31 @@ def get_census_tract_age_details(county_num, tract_num, state_num):
 
 
 # DATA ANALYSIS METHODS
-def iterate_census_tracts(data, state_num):
+def iterate_census_tracts(data, state_num,layer_type, files):
+    WRITE_FILE = files
     for index, row in data.iterrows():
-        # NAME_2
         tract_num = row['NAME']
         county_num = row['COUNTYFP']
         county_num = str(county_num).zfill(3)
         tract_num = format_tract_number(tract_num)
-        result_data = get_census_tract_age_details(county_num, tract_num, state_num)
-        print('currently on... ', index)
-        if result_data:
-            for key, value in zip(result_data[0], result_data[1]):
-                if key in census_age_and_sex_groups:
-                    data.at[index, census_age_and_sex_groups[key]] = value
-        else:
-            print(f"No data for tract: {tract_num}, county: {county_num}")
+        if layer_type == 'race':
+            result_data = get_census_tract_race_details(county_num, tract_num, state_num)
+            print('currently on... ', index)
+            if result_data:
+                for key, value in zip(result_data[0], result_data[1]):
+                    if key in census_racial_groups:
+                        data.at[index, census_racial_groups[key]] = value
+            else:
+                print(f"No data for tract: {tract_num}, county: {county_num}")
+        elif layer_type == 'income':
+            result_data = get_census_tract_income_details(county_num, tract_num, state_num)
+            print('currently on... ', index)
+            if result_data:
+                for key, value in zip(result_data[0], result_data[1]):
+                    if key in census_income_levels:
+                        data.at[index, census_income_levels[key]] = value
+            else:
+                print(f"No data for tract: {tract_num}, county: {county_num}")
     data_as_list = [data.columns.tolist()] + data.values.tolist()
     write_to_csv(WRITE_FILE, data_as_list)
     
@@ -145,7 +152,7 @@ def format_tract_number(tract):
 
 
 # WRITE/READ METHODS    
-def read_csv_data():
+def read_csv_data(READ_FILE):
     pd.options.display.max_rows = 10
     census_tract_data = pd.read_csv(READ_FILE)
     data = pd.DataFrame(census_tract_data)
@@ -160,4 +167,6 @@ def write_to_csv(filepath, data):
 
 
 if __name__ == "__main__":
-    main()
+    _, state, layer = sys.argv
+    main(state=state, layer_type=layer)
+
