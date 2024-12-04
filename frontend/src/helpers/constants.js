@@ -14,9 +14,9 @@ export const raceColorScale = {
     white_alone: "#298018",
     black_or_african_american_alone: "#3449b0",
     asian_alone: "#d4444e",
-    some_other_race_alone: "#e441ed",
-    two_or_more_races: "#c9c766",
-    hispanic_or_latino: "#e8a019",
+    some_other_alone: "#e441ed",
+    two_or_more: "#c9c766",
+    hispanic_or_latino_alone: "#e8a019",
 }
 
 export const incomeCategories = {
@@ -43,4 +43,15 @@ export const incomeColorScale = {
     '100_to_149': "#2ca25f",
     '150_to_199': "#006d2c",
     '200_or_more': "#006d2c"
+}
+
+export const coords = {
+    Buffalo: [42.88765720808551, -78.87714806011604],
+    Georgia: [33.7727648506865, -84.33690217118469],
+    Illinois: [41.78467172371183, -87.59717366843768],
+    Kentucky: [38.246547973753884, -85.76965140199106],
+    Massachusetts: [42.3601, -71.0589],
+    NYC: [40.71187578160734, -73.9970154053288],
+    Rochester: [43.19069325202286, -77.616747206373],
+    Wisconsin: [43.03870799408897, -87.90571684086169]
 }

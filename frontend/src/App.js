@@ -1,23 +1,31 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import { StackedBarChart } from './Plots';
+import 'leaflet/dist/leaflet.css';
 
+
+import { StackedBarChart, BaseMap } from './Plots';
 import { raceCategories, incomeCategories, raceColorScale, incomeColorScale } from './helpers/constants'
+
 
 function App() {
   const [data, setData] = useState(null);
-  const [state, setState] = useState("Massachusetts")
-  const [fileName, setFileName] = useState("income_data.csv")
+  const [state, setState] = useState("NYC")
+  const [fileName, setFileName] = useState("parks.geojson")
+  const [layerFileName, , setlayerFileName] = useState("total_distribution.geojson")
+  const [hispanicData, setHispanicData] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/api/data?state=${state}&file=${fileName}`);
+        const response = await fetch(`http://localhost:5050/api/geojson?state=${state}&file=${fileName}`);
+        const censusResponse = await fetch(`http://localhost:5050/api/geojson?state=${state}&subdir=race_layers&file=${layerFileName}`)
 
         const result = await response.json();
+        const censusResult = await censusResponse.json()
 
-        if (response.ok) {
+        if (response.ok && censusResponse.ok) {
           setData(result);
+          setHispanicData(censusResult)
         } else {
           console.error('Error:', result.error);
         }
@@ -26,16 +34,15 @@ function App() {
       }
     }
     fetchData()
-  }, [fileName, state]);
-
-  if (!data) {
+  }, [fileName, layerFileName, state]);
+  if (!data || !hispanicData) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="App">
       <div style={{ marginTop: 100 }}>
-        <StackedBarChart data={data} selectedPark={"Olmsted Park"} domainCategories={incomeCategories} totalSelector={'total_households_income_benefits'} colorScale={incomeColorScale} />
+        <BaseMap data={data} censusData={hispanicData} state={state} />
       </div>
     </div>
   );
