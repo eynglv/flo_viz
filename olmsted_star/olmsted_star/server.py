@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 import os
 import json
 import csv
@@ -39,6 +39,24 @@ def get_data():
         return jsonify({"error": "Unsupported file type"}), 400
 
     return jsonify(data)
+
+@app.route('/api/geojson', methods=['GET'])
+@cross_origin()
+def serve_geojson():
+    state = request.args.get('state')
+    subdir = request.args.get('subdir')
+    file_name = request.args.get('file')  
+
+    if not state or not file_name:
+        return jsonify({"error": "State and file parameters are required"}), 400
+
+    external_geojson_directory = '/Users/elvyyang/Documents/parks-qgis'
+    file_path = os.path.join(external_geojson_directory, state, subdir or '')
+
+    if not os.path.exists(os.path.join(external_geojson_directory, file_path)):
+        return jsonify({"error": f"GeoJSON file {file_path} not found"}), 404
+
+    return send_from_directory(file_path, file_name)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True)
