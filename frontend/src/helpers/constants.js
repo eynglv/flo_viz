@@ -55,3 +55,18 @@ export const coords = {
     Rochester: [43.19069325202286, -77.616747206373],
     Wisconsin: [43.03870799408897, -87.90571684086169]
 }
+
+export const layers = {
+    Race: 'race_layers',
+    Income: 'income_layers',
+    Hex: 'hex'
+}
+
+
+export const adjustedBins = {
+    "less_than_50k": ["less_than_10", "10_to_14", "15_to_24", "25_to_34"],
+    "50k_to_99k": ["35_to_49", "50_to_74", "75_to_99"],
+    "100k_to_149k": ["100_to_149"],
+    "150k_to_199k": ["150_to_199"],
+    "200k_plus": ["more_than_200"],
+};
