@@ -5,15 +5,18 @@ import 'leaflet/dist/leaflet.css';
 
 import { layers, coords } from './helpers/constants'
 import { MapsProvider } from './useMaps';
+import { HomeProvider } from './useHome';
 import Home from './Home';
 
 
 function App() {
   return (
     <div className="App">
-      <MapsProvider>
-        <Home />
-      </MapsProvider>
+      <HomeProvider>
+        <MapsProvider>
+          <Home />
+        </MapsProvider>
+      </HomeProvider>
     </div>
   );
 }

@@ -2,21 +2,21 @@ export const raceCategories = {
     white_alone: "White",
     black_or_african_american_alone: "Black",
     asian_alone: "Asian",
-    hispanic_or_latino: "Hispanic",
-    two_or_more_races: "Mixed",
-    some_other_race_alone: "Other",
+    hispanic_or_latino_alone: "Hispanic",
+    two_or_more: "Mixed",
+    some_other_alone: "Other",
 }
 // total_population: 'Total Population'
 // 'total_households_income_benefits': 'Total Households Income',
 
 
 export const raceColorScale = {
-    white_alone: "#298018",
-    black_or_african_american_alone: "#3449b0",
-    asian_alone: "#d4444e",
-    some_other_alone: "#e441ed",
-    two_or_more: "#c9c766",
-    hispanic_or_latino_alone: "#e8a019",
+    white_alone: "bg-green-700",
+    black_or_african_american_alone: "bg-indigo-800",
+    asian_alone: "bg-red-700",
+    some_other_alone: "bg-fuchsia-500",
+    two_or_more: "bg-amber-400",
+    hispanic_or_latino_alone: "bg-orange-400",
 }
 
 export const incomeCategories = {
