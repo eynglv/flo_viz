@@ -134,7 +134,7 @@ const DotDistribution = ({
         return displayName;
       })
       .attr("dy", "0.3em")
-      .style("font-size", (d) => `${Math.min(d.r / 3, 10)}px`)
+      .style("font-size", (d) => `${Math.min(d.r / 3, 13)}px`)
       .style("fill", "#fff")
       .style("text-anchor", "middle");
 
@@ -142,7 +142,9 @@ const DotDistribution = ({
       .append("text")
       .text((d) => d.value)
       .attr("x", 0)
-      .attr("y", "2em");
+      .attr("y", "2em")
+      .style("font-size", "10px")
+      .style("fill", "#fff");
   }, [color, height, hierarchy, margin, width]);
 
   return <svg width={width} height={height} ref={ref} />;
