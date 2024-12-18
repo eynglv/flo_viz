@@ -11,12 +11,12 @@ export const raceCategories = {
 
 
 export const raceColorScale = {
-    white_alone: "bg-green-700",
-    black_or_african_american_alone: "bg-indigo-800",
-    asian_alone: "bg-red-700",
-    some_other_alone: "bg-fuchsia-500",
-    two_or_more: "bg-amber-400",
-    hispanic_or_latino_alone: "bg-orange-400",
+    white_alone: ["bg-green-700", "#15803d"],
+    black_or_african_american_alone: ["bg-indigo-800", "#3730a3"],
+    asian_alone: ["bg-red-700", "#b91c1c"],
+    some_other_alone: ["bg-fuchsia-500", "#d946ef"],
+    two_or_more: ["bg-amber-400", "#fbbf24"],
+    hispanic_or_latino_alone: ["bg-orange-400", "#fb923c"],
 }
 
 export const incomeCategories = {
@@ -33,16 +33,16 @@ export const incomeCategories = {
 }
 
 export const incomeColorScale = {
-    'less_than_10': '#edf8fb',
-    '10_to_14': '#edf8fb',
-    '15_to_24': '#b2e2e2',
-    '25_to_34': '#b2e2e2',
-    '35_to_49': '#66c2a4',
-    '50_to_74': "#66c2a4",
-    '75_to_99': '#2ca25f',
-    '100_to_149': "#2ca25f",
-    '150_to_199': "#006d2c",
-    '200_or_more': "#006d2c"
+    'less_than_10': ["bg-sky-50", '#edf8fb'],
+    '10_to_14': ["bg-sky-50", '#edf8fb'],
+    '15_to_24': ["bg-sky-100", '#b2e2e2'],
+    '25_to_34': ["bg-sky-100", '#b2e2e2'],
+    '35_to_49': ["bg-emerald-300", '#66c2a4'],
+    '50_to_74': ["bg-emerald-300", '#66c2a4'],
+    '75_to_99': ["bg-emerald-500", '#2ca25f'],
+    '100_to_149': ["bg-emerald-500", '#2ca25f'],
+    '150_to_199': ["bg-green-700", "#006d2c"],
+    '200_or_more': ["bg-green-700", "#006d2c"]
 }
 
 export const coords = {

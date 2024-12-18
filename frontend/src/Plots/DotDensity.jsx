@@ -13,7 +13,7 @@ const DotDensity = ({ data }) => {
   };
 
   const tailwindColorMap = Object.keys(raceColorScale).reduce((acc, key) => {
-    acc[key] = getTailwindColor(raceColorScale[key]);
+    acc[key] = getTailwindColor(raceColorScale[key][0]);
     return acc;
   }, {});
 

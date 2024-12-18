@@ -98,7 +98,7 @@ const DotDistribution = ({
   const group = (d) => d.id.split(".")[0];
   const name = (d) => d.id.split(".")[1];
 
-  const color = d3.scaleOrdinal(d3.schemeTableau10);
+  const color = d3.scaleOrdinal(d3.schemePaired);
 
   useEffect(() => {
     const svgElement = d3.select(ref.current);
@@ -140,12 +140,23 @@ const DotDistribution = ({
 
     node
       .append("text")
-      .text((d) => d.value)
+      .text((d) => d.value.toLocaleString())
       .attr("x", 0)
       .attr("y", "2em")
       .style("font-size", "10px")
       .style("fill", "#fff");
   }, [color, height, hierarchy, margin, width]);
+
+  useEffect(() => {
+    const svgElement = d3.select(ref.current);
+
+    svgElement
+      .append("text")
+      .text((d) => state)
+      .attr("x", width / 2)
+      .attr("y", margin * 2)
+      .attr("font-size", "34px");
+  }, [height, margin, state, width]);
 
   return <svg width={width} height={height} ref={ref} />;
 };

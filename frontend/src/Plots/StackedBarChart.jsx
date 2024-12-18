@@ -1,21 +1,35 @@
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 
+import {
+  raceCategories,
+  raceColorScale,
+  incomeCategories,
+  incomeColorScale,
+  layers,
+} from "../helpers/constants";
+
 const StackedBarChart = ({
-  data,
+  data: fullData,
+  selectedPark,
+  type,
   width = 1200,
   height = 700,
   marginTop = 100,
   marginRight = 20,
   marginBottom = 50,
-  marginLeft = 20,
-  selectedPark,
-  totalSelector,
-  domainCategories,
-  colorScale,
+  marginLeft = 50,
 }) => {
   const ref = useRef();
+
+  const data = type === layers.Race ? fullData.race_data : fullData.income_data;
   const selectedParkData = data.filter((row) => row["name_2"] === selectedPark);
+
+  const totalSelector =
+    type === layers.Race ? "total_population" : "200_or_more";
+  const domainCategories =
+    type === layers.Race ? raceCategories : incomeCategories;
+  const colorScale = type === layers.Race ? raceColorScale : incomeColorScale;
 
   const generator = d3
     .stack()
@@ -63,7 +77,7 @@ const StackedBarChart = ({
       .selectAll()
       .data(series)
       .join("g")
-      .attr("fill", (d) => colorScale[d.key])
+      .attr("fill", (d) => colorScale[d.key][1])
       .selectAll("rect")
       .data((D) => D.map((d) => ((d.key = D.key), d)))
       .join("rect")
@@ -90,7 +104,7 @@ const StackedBarChart = ({
       .attr("y", (d, i) => marginTop + i * (size + legendPadding))
       .attr("width", size)
       .attr("height", size)
-      .attr("fill", (d) => colorScale[d.key]);
+      .attr("fill", (d) => colorScale[d.key][1]);
 
     svgElement
       .selectAll("labels")
@@ -108,6 +122,20 @@ const StackedBarChart = ({
       .attr("text-anchor", "left")
       .style("alignment-baseline", "middle");
   }, [colorScale, domainCategories, marginRight, marginTop, series, width]);
+
+  // add title
+  useEffect(() => {
+    const svgElement = d3.select(ref.current);
+    svgElement
+      .append("text")
+      .text((d) => {
+        const title = `${selectedPark} Census Distribution`;
+        return title;
+      })
+      .attr("x", width / 3)
+      .attr("y", 80)
+      .attr("font-size", "20px");
+  }, [selectedPark, width]);
 
   return <svg width={width} height={height} ref={ref} />;
 };
