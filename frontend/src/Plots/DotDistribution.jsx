@@ -12,7 +12,12 @@ const generateHierarchy = (data) => {
     const uniqueKey = id + "&" + tract;
 
     const stats = Object.fromEntries(
-      incomeKeys.map((key) => [key, currVal[key]])
+      incomeKeys.map((key) => {
+        if (currVal[key] < 0) {
+          return [];
+        }
+        return [key, currVal[key]];
+      })
     );
     return {
       ...accumulator,
@@ -75,10 +80,12 @@ const generateHierarchy = (data) => {
     return accumulator;
   }, {});
 
-  const result = Object.entries(sumValues).map(([key, value]) => {
-    const id = raceKeys.includes(key) ? `race.${key}` : `income.${key}`;
-    return { id, value };
-  });
+  const result = Object.entries(sumValues)
+    .map(([key, value]) => {
+      const id = raceKeys.includes(key) ? `race.${key}` : `income.${key}`;
+      return { id, value };
+    })
+    .filter(({ id, value }) => !!value);
 
   return result;
 };
