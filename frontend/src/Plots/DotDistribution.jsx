@@ -1,22 +1,81 @@
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
-import { incomeCategories, raceCategories } from "../helpers/constants";
+import {
+  incomeCategories,
+  raceCategories,
+  sexCategories,
+  referencer,
+  adjustedAgeBins,
+} from "../helpers/constants";
 
-const generateHierarchy = (data) => {
-  const incomeKeys = Object.keys(incomeCategories);
-  const raceKeys = Object.keys(raceCategories);
-
-  const { income_data: incomeData, race_data: raceData } = data;
-  const incomeReferencer = incomeData.reduce((accumulator, currVal) => {
+// Helper functions
+const filterRelevantData = (data, referenceKey, reference) => {
+  return data.reduce((accumulator, currVal) => {
     const { id, TRACTCE: tract } = currVal;
     const uniqueKey = id + "&" + tract;
 
     const stats = Object.fromEntries(
-      incomeKeys.map((key) => {
+      referenceKey.map((key) => {
+        const referenceKey = reference + "." + key;
         if (currVal[key] < 0) {
           return [];
         }
-        return [key, currVal[key]];
+        return [referenceKey, currVal[key]];
+      })
+    );
+    return {
+      ...accumulator,
+      [uniqueKey]: stats,
+    };
+  }, {});
+};
+
+const findKeyIntersection = (dataset) => {
+  if (dataset.length === 0) return [];
+
+  return dataset.reduce((commonKeys, currentDataset) => {
+    const currentKeys = Object.keys(currentDataset);
+    return commonKeys.filter((key) => currentKeys.includes(key));
+  }, Object.keys(dataset[0]));
+};
+
+// Data Wrangling
+const generateHierarchy = (data) => {
+  const incomeKeys = Object.keys(incomeCategories);
+  const raceKeys = Object.keys(raceCategories);
+  const genderKeys = Object.keys(sexCategories);
+
+  const {
+    income_data: incomeData,
+    race_data: raceData,
+    age_data: ageData,
+  } = data;
+
+  const genderReferencer = filterRelevantData(ageData, genderKeys, "gender");
+  const incomeReferencer = filterRelevantData(incomeData, incomeKeys, "income");
+  const raceReferencer = filterRelevantData(raceData, raceKeys, "race");
+
+  const totalPopulationReferencer = ageData.reduce((accumulator, currVal) => {
+    const { id, TRACTCE: tract, total_population: totalPopulation } = currVal;
+    const uniqueKey = id + "&" + tract;
+    return {
+      ...accumulator,
+      [uniqueKey]: totalPopulation,
+    };
+  }, {});
+
+  const ageReferencer = ageData.reduce((accumulator, currVal) => {
+    const { id, TRACTCE: tract } = currVal;
+    const uniqueKey = id + "&" + tract;
+
+    const stats = Object.fromEntries(
+      Object.entries(adjustedAgeBins).map(([bin, keys]) => {
+        const referenceKey = "age." + bin;
+        let sum = 0;
+        for (const key of keys) {
+          sum += parseFloat(currVal[key]);
+        }
+        return [referenceKey, sum];
       })
     );
     return {
@@ -25,23 +84,9 @@ const generateHierarchy = (data) => {
     };
   }, {});
 
-  const raceReferencer = raceData.reduce((accumulator, currVal) => {
-    const { id, TRACTCE: tract, total_population: totalPopulation } = currVal;
-    const uniqueKey = id + "&" + tract;
-
-    const stats = Object.fromEntries(
-      raceKeys.map((key) => [key, parseFloat(currVal[key])])
-    );
-
-    return {
-      ...accumulator,
-      [uniqueKey]: { totalPopulation, ...stats },
-    };
-  }, {});
-
   const convertedIncomeValues = Object.fromEntries(
     Object.entries(incomeReferencer).map(([id, stats]) => {
-      const totalPopulation = parseFloat(raceReferencer[id]["totalPopulation"]);
+      const totalPopulation = parseFloat(totalPopulationReferencer[id]);
 
       const recalculatedValues = Object.fromEntries(
         Object.entries(stats).map(([key, percentage]) => [
@@ -53,21 +98,21 @@ const generateHierarchy = (data) => {
     })
   );
 
-  // the one with smaller length
-  const firstRef =
-    Object.keys(convertedIncomeValues).length >
-    Object.keys(raceReferencer).length
-      ? raceReferencer
-      : convertedIncomeValues;
+  const aggregateData = [
+    raceReferencer,
+    convertedIncomeValues,
+    genderReferencer,
+    ageReferencer,
+  ];
 
-  // the one with larger length
-  const secondRef =
-    firstRef === convertedIncomeValues ? raceReferencer : convertedIncomeValues;
+  const intersectionKeys = findKeyIntersection(aggregateData);
 
-  const intersection = Object.entries(firstRef).map(([id, stats]) => {
+  const intersection = intersectionKeys.map((key) => {
     return {
-      ...stats,
-      ...secondRef[id],
+      ...raceReferencer[key],
+      ...convertedIncomeValues[key],
+      ...genderReferencer[key],
+      ...ageReferencer[key],
     };
   });
 
@@ -82,14 +127,14 @@ const generateHierarchy = (data) => {
 
   const result = Object.entries(sumValues)
     .map(([key, value]) => {
-      const id = raceKeys.includes(key) ? `race.${key}` : `income.${key}`;
-      return { id, value };
+      return { id: key, value };
     })
     .filter(({ id, value }) => !!value);
 
   return result;
 };
 
+// Main Component
 const DotDistribution = ({
   data: fullData,
   width = 1200,
@@ -135,9 +180,9 @@ const DotDistribution = ({
       .append("text")
       .text((d) => {
         const key = name(d.data);
-        const displayName = Object.keys(raceCategories).includes(key)
-          ? raceCategories[key]
-          : incomeCategories[key];
+        const category = group(d.data);
+        const displayName = referencer[category][key];
+
         return displayName;
       })
       .attr("dy", "0.3em")
@@ -161,7 +206,7 @@ const DotDistribution = ({
       .append("text")
       .text((d) => state)
       .attr("x", width / 2)
-      .attr("y", margin * 2)
+      .attr("y", margin / 5)
       .attr("font-size", "34px");
   }, [height, margin, state, width]);
 

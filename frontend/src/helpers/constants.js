@@ -32,6 +32,19 @@ export const incomeCategories = {
     '200_or_more': "$200,000 or more"
 }
 
+export const sexCategories = {
+    "total_female_population": "Female",
+    "total_male_population": "Male",
+}
+
+export const ageCategories = {
+    "under_20": "Under 20 Years",
+    "20_to_35": "20 To 35 Years",
+    "35_to_60": "35 To 60 Years",
+    "60_to_80": "60 To 80 Years",
+    "80_and_over": "80 Years and Over",
+}
+
 export const incomeColorScale = {
     'less_than_10': ["bg-sky-50", '#edf8fb'],
     '10_to_14': ["bg-sky-50", '#edf8fb'],
@@ -57,16 +70,24 @@ export const coords = {
 }
 
 export const layers = {
-    Race: 'race_layers',
-    Income: 'income_layers',
-    Hex: 'hex'
+    Race: { layer: 'race_layers', geojsonFilename: 'total_distribution.geojson', censusFilename: 'race_data.csv' },
+    Income: { layer: 'income_layers', geojsonFilename: 'total_distribution.geojson', censusFilename: 'income_data.csv' },
+    Sex: { layer: 'sex_layers', censusFilename: 'age_data.csv' },
+    Age: { layer: 'sex_layers', censusFilename: 'age_data.csv' }
 }
 
 
-export const adjustedBins = {
-    "less_than_50k": ["less_than_10", "10_to_14", "15_to_24", "25_to_34"],
-    "50k_to_99k": ["35_to_49", "50_to_74", "75_to_99"],
-    "100k_to_149k": ["100_to_149"],
-    "150k_to_199k": ["150_to_199"],
-    "200k_plus": ["more_than_200"],
+export const adjustedAgeBins = {
+    "under_20": ["total_under_5", "total_5_to_9", "total_10_to_14", "total_15_to_19"],
+    "20_to_35": ["total_20_to_24", "total_25_to_29", "total_30_to_34"],
+    "35_to_60": ["total_35_to_39", "total_40_to_44", "total_45_to_49", "total_50_to_54", "total_55_to_59"],
+    "60_to_80": ["total_60_to_64", "total_65_to_69", "total_70_to_74", "total_75_to_79"],
+    "80_and_over": ["total_80_to_84", "total_85_and_over"],
 };
+
+export const referencer = {
+    'race': raceCategories,
+    'income': incomeCategories,
+    'gender': sexCategories,
+    'age': ageCategories
+}
