@@ -39,7 +39,8 @@ const BaseMap = ({ data, state, children }) => {
           pointToLayer={() => null}
           onEachFeature={(feature, layer) => {
             if (
-              feature.geometry.type === "Polygon" &&
+              (feature.geometry.type === "Polygon" ||
+                feature.geometry.type === "MultiPolygon") &&
               feature.properties.name
             ) {
               layer.bindTooltip(feature.properties.name, {

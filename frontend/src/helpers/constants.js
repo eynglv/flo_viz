@@ -86,8 +86,8 @@ export const adjustedAgeBins = {
 };
 
 export const referencer = {
-    'race': raceCategories,
-    'income': incomeCategories,
-    'gender': sexCategories,
-    'age': ageCategories
+    'race': { category: raceCategories, color: "#5778a4" },
+    'income': { category: incomeCategories, color: "#e49444" },
+    'gender': { category: sexCategories, color: "#d1615d" },
+    'age': { category: ageCategories, color: "#85b6b2" }
 }

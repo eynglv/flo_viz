@@ -39,6 +39,11 @@ const findKeyIntersection = (dataset) => {
   }, Object.keys(dataset[0]));
 };
 
+const capitalizeFirstLetter = (str) => {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 // Data Wrangling
 const generateHierarchy = (data) => {
   const incomeKeys = Object.keys(incomeCategories);
@@ -150,7 +155,7 @@ const DotDistribution = ({
   const group = (d) => d.id.split(".")[0];
   const name = (d) => d.id.split(".")[1];
 
-  const color = d3.scaleOrdinal(d3.schemePaired);
+  const color = d3.scaleOrdinal(d3.schemeTableau10);
 
   useEffect(() => {
     const svgElement = d3.select(ref.current);
@@ -181,14 +186,14 @@ const DotDistribution = ({
       .text((d) => {
         const key = name(d.data);
         const category = group(d.data);
-        const displayName = referencer[category][key];
-
+        const displayName = referencer[category]["category"][key];
         return displayName;
       })
       .attr("dy", "0.3em")
       .style("font-size", (d) => `${Math.min(d.r / 3, 13)}px`)
       .style("fill", "#fff")
-      .style("text-anchor", "middle");
+      .style("text-anchor", "middle")
+      .attr("clip-path", (d) => `circle(${d.r})`);
 
     node
       .append("text")
@@ -199,18 +204,24 @@ const DotDistribution = ({
       .style("fill", "#fff");
   }, [color, height, hierarchy, margin, width]);
 
-  useEffect(() => {
-    const svgElement = d3.select(ref.current);
-
-    svgElement
-      .append("text")
-      .text((d) => state)
-      .attr("x", width / 2)
-      .attr("y", margin / 5)
-      .attr("font-size", "34px");
-  }, [height, margin, state, width]);
-
-  return <svg width={width} height={height} ref={ref} />;
+  return (
+    <div className='w-full h-full flex flex-col items-center'>
+      <svg width={width} height={height} ref={ref} />
+      <div className='w-3/4 flex justify-center'>
+        {Object.entries(referencer).map(([key, values]) => {
+          const { color } = values;
+          return (
+            <div key={key} className='flex flex-wrap items-center'>
+              <div className='w-4 h-4' style={{ backgroundColor: color }} />
+              <div className='mr-1' />
+              <p className='text-center'>{capitalizeFirstLetter(key)}</p>
+              <div className='mr-4' />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 export default DotDistribution;

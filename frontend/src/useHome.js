@@ -10,8 +10,8 @@ export const HomeProvider = ({ children }) => {
 
     useEffect(() => {
         const states = Object.keys(coords);
-        const fileNames = ['race_data.csv', 'income_data.csv'];
-        const state = 'Massachusetts' //temp
+        const fileNames = ['race_data.csv', 'income_data.csv', 'age_data.csv'];
+        const state = 'Rochester' //temp
 
         const fetchAllData = async () => {
             try {

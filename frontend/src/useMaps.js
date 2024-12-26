@@ -33,7 +33,7 @@ export const MapsProvider = ({ children }) => {
         const states = Object.keys(coords);
         const fileName = 'parks.geojson'
         const layerFileName = 'total_distribution.geojson'
-        const layerType = layers.Race
+        const layerType = layers.Race.layer
 
         const fetchAllData = async () => {
             try {
