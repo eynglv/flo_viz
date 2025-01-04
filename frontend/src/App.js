@@ -1,9 +1,6 @@
 import './App.css';
-import { useState, useEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 
-
-import { layers, coords } from './helpers/constants'
 import { MapsProvider } from './useMaps';
 import { HomeProvider } from './useHome';
 import Home from './Home';
@@ -11,7 +8,7 @@ import Home from './Home';
 
 function App() {
   return (
-    <div className="App">
+    <div className='font-serif bg-green-900 min-h-screen text-green-100'>
       <HomeProvider>
         <MapsProvider>
           <Home />

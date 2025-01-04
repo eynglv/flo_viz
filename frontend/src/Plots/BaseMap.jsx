@@ -11,7 +11,7 @@ import { hexbin } from "d3-hexbin";
 import * as d3 from "d3";
 import { geoPath, geoAlbers, geoMercator } from "d3";
 
-const BaseMap = ({ data, state, children }) => {
+const BaseMap = ({ data, state, children, legend = true }) => {
   const parksData = data.parks;
   const censusData = data.census;
 
@@ -65,7 +65,7 @@ const BaseMap = ({ data, state, children }) => {
         {/* <MoreHexbinLayers width='200' height='200' filteredTracts={censusData} /> */}
       </MapContainer>
       <div className='mr-3' />
-      <Legend />
+      {legend && <Legend />}
     </div>
   );
 };
