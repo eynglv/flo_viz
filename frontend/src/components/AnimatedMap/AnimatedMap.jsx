@@ -24,6 +24,9 @@ const AnimatedMap = ({ parksData }) => {
                 opacity: "85%",
               },
               onEachFeature: (feature, layer) => {
+                let direction;
+                let offset;
+                // so jank sooooo jank
                 if (
                   feature.properties.name &&
                   feature.properties.name !== "Quaker Cemetery"
@@ -32,20 +35,24 @@ const AnimatedMap = ({ parksData }) => {
                     feature.properties.name === "Herbert Von King Park" ||
                     feature.properties.name === "Harlem River Park"
                   ) {
-                    layer.bindTooltip(feature.properties.name, {
-                      permanent: true,
-                      direction: "bottom",
-                      className: "custom-tooltip",
-                      offset: [10, 0],
-                    });
+                    direction = "bottom";
+                    offset = [10, 5];
+                  } else if (feature.properties.name === "Morningside Park") {
+                    direction = "top";
+                    offset = [0, -40];
+                  } else if (feature.properties.name === "Prospect Park") {
+                    direction = "left";
+                    offset = [-30, -5];
                   } else {
-                    layer.bindTooltip(feature.properties.name, {
-                      permanent: true,
-                      direction: "left",
-                      className: "custom-tooltip",
-                      offset: [-15, 10],
-                    });
+                    direction = "left";
+                    offset = [-10, -5];
                   }
+                  layer.bindTooltip(feature.properties.name, {
+                    permanent: true,
+                    direction: direction,
+                    className: "custom-tooltip",
+                    offset: offset,
+                  });
                 }
               },
             });
@@ -67,7 +74,7 @@ const AnimatedMap = ({ parksData }) => {
     <div className='w-[70%] h-[90%]'>
       <MapContainer
         ref={mapRef}
-        center={[40.754701524748846, -73.93749692362799]}
+        center={[40.74593357209121, -73.9550721304568]}
         zoom={12}
         style={{ position: "sticky", right: 0, width: "50%", height: "100%" }}
         scrollWheelZoom={false}
