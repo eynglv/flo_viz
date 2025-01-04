@@ -1,7 +1,6 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useEffect, useRef } from "react";
 
-import { coords } from "../../helpers/constants";
 import "./animatedMap.css";
 
 const AnimatedMap = ({ parksData }) => {
@@ -74,7 +73,7 @@ const AnimatedMap = ({ parksData }) => {
     <div className='w-[70%] h-[90%]'>
       <MapContainer
         ref={mapRef}
-        center={[40.74593357209121, -73.9550721304568]}
+        center={[40.74741369210418, -73.96406544461558]}
         zoom={12}
         style={{ position: "sticky", right: 0, width: "50%", height: "100%" }}
         scrollWheelZoom={false}
