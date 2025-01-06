@@ -1,30 +1,19 @@
-import { useMaps } from "../useMaps";
-import AnimatedMap from "../components/AnimatedMap/AnimatedMap";
-
-const Home = () => {
-  const { mapsData, loading, error } = useMaps();
-
-  if (loading) {
-    return <h1>Loading...</h1>;
-  } else if (error) {
-    return null;
-  }
-
-  return (
-    <div className='w-screen mx-8'>
-      <div className='w-full h-svh flex justify-between items-center'>
-        <div>
-          <h1 className='text-5xl mb-3'>TLDR of essay</h1>
-          <div className='flex items-center animate-bounce'>
-            <DownArrowIcon />
-            <p className='ml-2'>Scroll</p>
-          </div>
-        </div>
-        <AnimatedMap parksData={mapsData["NYC"].parks} />
+const Home = () => (
+  <div className='w-full h-svh flex flex-col justify-evenly'>
+    <div>
+      <h1 className='text-4xl mb-3'>
+        Frederick Law Olmsted, known best for his epochal design of New York's
+        Central Park, is regarded as the father of American landscape
+        architecture.
+      </h1>
+      <div className='flex items-center animate-bounce'>
+        <DownArrowIcon />
+        <p className='ml-2 text-xl'>Scroll</p>
       </div>
     </div>
-  );
-};
+    <p className=''>By Elvy Yang</p>
+  </div>
+);
 
 const DownArrowIcon = () => (
   <svg

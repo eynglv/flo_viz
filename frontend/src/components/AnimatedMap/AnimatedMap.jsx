@@ -5,6 +5,7 @@ import "./animatedMap.css";
 
 const AnimatedMap = ({ parksData }) => {
   const mapRef = useRef(null);
+  // TODO disable dragging
 
   useEffect(() => {
     if (mapRef.current) {
@@ -70,12 +71,18 @@ const AnimatedMap = ({ parksData }) => {
   }, [parksData]);
 
   return (
-    <div className='w-[70%] h-[90%]'>
+    <div className='sticky inset-y-0 h-screen flex-1'>
       <MapContainer
         ref={mapRef}
-        center={[40.74741369210418, -73.96406544461558]}
+        center={[40.73100603506714, -73.96420497576007]}
         zoom={12}
-        style={{ position: "sticky", right: 0, width: "50%", height: "100%" }}
+        style={{
+          position: "absolute",
+          right: "5%",
+          top: "5%",
+          width: "92.5%",
+          height: "90%",
+        }}
         scrollWheelZoom={false}
         zoomControl={false}
         doubleClickZoom={false}
