@@ -1,9 +1,10 @@
 import './App.css';
 import 'leaflet/dist/leaflet.css';
 
+
 import { MapsProvider } from './useMaps';
 import { HomeProvider } from './useHome';
-import Home from './Home';
+import Content from './Content';
 
 
 function App() {
@@ -11,7 +12,7 @@ function App() {
     <div className='font-serif bg-green-900 min-h-screen text-green-100'>
       <HomeProvider>
         <MapsProvider>
-          <Home />
+          <Content />
         </MapsProvider>
       </HomeProvider>
     </div>
