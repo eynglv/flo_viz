@@ -1,7 +1,7 @@
 import { raceColorScale, raceCategories } from "../helpers/constants";
 
 const Legend = () => (
-  <div className='w-44 h-60 border-4 border-slate-900 rounded-md flex flex-col flex-wrap justify-evenly content-center'>
+  <div className='w-44 h-60 border-4 border-slate-900 rounded-md flex flex-col flex-wrap justify-evenly content-center text-black bg-gray-100'>
     <p className='font-semibold text-lg'>Map Key</p>
     <p className='text-xs'>one dot = 100 people</p>
     {Object.entries(raceCategories).map(([key, displayName]) => {

@@ -1,10 +1,10 @@
 const Home = () => (
   <div className='w-full h-svh flex flex-col justify-evenly'>
     <div>
-      <h1 className='text-4xl mb-3'>
-        Frederick Law Olmsted, known best for his epochal design of New York's
-        Central Park, is regarded as the father of American landscape
-        architecture.
+      <h1 className='text-3xl mb-3'>
+        <span className='font-bold'>Frederick Law Olmsted</span>, known best for
+        his epochal design of New York's Central Park, is regarded as the father
+        of American landscape architecture.
       </h1>
       <div className='flex items-center animate-bounce'>
         <DownArrowIcon />
