@@ -6,6 +6,7 @@ import {
   sexCategories,
   referencer,
   adjustedAgeBins,
+  layers,
 } from "../helpers/constants";
 
 // Helper functions
@@ -45,7 +46,7 @@ const capitalizeFirstLetter = (str) => {
 };
 
 // Data Wrangling
-const generateHierarchy = (data) => {
+const generateHierarchy = (data, categories = ["income", "race", "gender"]) => {
   const incomeKeys = Object.keys(incomeCategories);
   const raceKeys = Object.keys(raceCategories);
   const genderKeys = Object.keys(sexCategories);
@@ -56,11 +57,14 @@ const generateHierarchy = (data) => {
     age_data: ageData,
   } = data;
 
-  const genderReferencer = filterRelevantData(ageData, genderKeys, "gender");
-  const incomeReferencer = filterRelevantData(incomeData, incomeKeys, "income");
-  const raceReferencer = filterRelevantData(raceData, raceKeys, "race");
+  let genderReferencer,
+    incomeReferencer,
+    raceReferencer,
+    totalPopulationReferencer,
+    ageReferencer,
+    convertedIncomeValues;
 
-  const totalPopulationReferencer = ageData.reduce((accumulator, currVal) => {
+  totalPopulationReferencer = ageData.reduce((accumulator, currVal) => {
     const { id, TRACTCE: tract, total_population: totalPopulation } = currVal;
     const uniqueKey = id + "&" + tract;
     return {
@@ -69,62 +73,91 @@ const generateHierarchy = (data) => {
     };
   }, {});
 
-  const ageReferencer = ageData.reduce((accumulator, currVal) => {
-    const { id, TRACTCE: tract } = currVal;
-    const uniqueKey = id + "&" + tract;
+  if (categories.includes("income")) {
+    incomeReferencer = filterRelevantData(incomeData, incomeKeys, "income");
+  }
 
-    const stats = Object.fromEntries(
-      Object.entries(adjustedAgeBins).map(([bin, keys]) => {
-        const referenceKey = "age." + bin;
-        let sum = 0;
-        for (const key of keys) {
-          sum += parseFloat(currVal[key]);
-        }
-        return [referenceKey, sum];
+  if (categories.includes("race")) {
+    raceReferencer = filterRelevantData(raceData, raceKeys, "race");
+  }
+
+  if (categories.includes("gender")) {
+    genderReferencer = filterRelevantData(ageData, genderKeys, "gender");
+  }
+
+  if (categories.includes("gender")) {
+    ageReferencer = ageData.reduce((accumulator, currVal) => {
+      const { id, TRACTCE: tract } = currVal;
+      const uniqueKey = id + "&" + tract;
+
+      const stats = Object.fromEntries(
+        Object.entries(adjustedAgeBins).map(([bin, keys]) => {
+          const referenceKey = "age." + bin;
+          let sum = 0;
+          for (const key of keys) {
+            sum += parseFloat(currVal[key]);
+          }
+          return [referenceKey, sum];
+        })
+      );
+      return {
+        ...accumulator,
+        [uniqueKey]: stats,
+      };
+    }, {});
+  }
+  if (categories.includes("income")) {
+    convertedIncomeValues = Object.fromEntries(
+      Object.entries(incomeReferencer).map(([id, stats]) => {
+        const totalPopulation = parseFloat(totalPopulationReferencer[id]);
+
+        const recalculatedValues = Object.fromEntries(
+          Object.entries(stats).map(([key, percentage]) => [
+            key,
+            parseInt((parseFloat(percentage) / 100) * totalPopulation),
+          ])
+        );
+        return [id, recalculatedValues];
       })
     );
-    return {
-      ...accumulator,
-      [uniqueKey]: stats,
-    };
-  }, {});
+  }
 
-  const convertedIncomeValues = Object.fromEntries(
-    Object.entries(incomeReferencer).map(([id, stats]) => {
-      const totalPopulation = parseFloat(totalPopulationReferencer[id]);
+  const aggregateData = [];
 
-      const recalculatedValues = Object.fromEntries(
-        Object.entries(stats).map(([key, percentage]) => [
-          key,
-          parseInt((parseFloat(percentage) / 100) * totalPopulation),
-        ])
-      );
-      return [id, recalculatedValues];
-    })
-  );
-
-  const aggregateData = [
-    raceReferencer,
-    convertedIncomeValues,
-    genderReferencer,
-    ageReferencer,
-  ];
+  if (categories.includes("race")) aggregateData.push(raceReferencer);
+  if (categories.includes("income")) aggregateData.push(convertedIncomeValues);
+  if (categories.includes("gender")) aggregateData.push(genderReferencer);
+  if (categories.includes("gender")) aggregateData.push(ageReferencer);
 
   const intersectionKeys = findKeyIntersection(aggregateData);
 
   const intersection = intersectionKeys.map((key) => {
-    return {
-      ...raceReferencer[key],
-      ...convertedIncomeValues[key],
-      ...genderReferencer[key],
-      ...ageReferencer[key],
-    };
+    const result = {};
+
+    if (raceReferencer && raceReferencer[key]) {
+      Object.assign(result, raceReferencer[key]);
+    }
+
+    if (convertedIncomeValues && convertedIncomeValues[key]) {
+      Object.assign(result, convertedIncomeValues[key]);
+    }
+
+    if (genderReferencer && genderReferencer[key]) {
+      Object.assign(result, genderReferencer[key]);
+    }
+
+    if (ageReferencer && ageReferencer[key]) {
+      Object.assign(result, ageReferencer[key]);
+    }
+
+    return result;
   });
 
   const sumValues = intersection.reduce((accumulator, currVal) => {
     for (const key in currVal) {
       if (key !== "totalPopulation") {
-        accumulator[key] = (accumulator[key] || 0) + parseFloat(currVal[key]);
+        accumulator[key] =
+          (parseFloat(accumulator[key]) || 0) + parseFloat(currVal[key]);
       }
     }
     return accumulator;
@@ -146,11 +179,27 @@ const DotDistribution = ({
   height = 1000,
   margin = 20,
   state,
+  selectedPark = "all",
+  layer,
 }) => {
   const ref = useRef();
 
   const data = fullData[state];
-  const hierarchy = generateHierarchy(data);
+  let selectedParkData;
+
+  if (selectedPark !== "all") {
+    selectedParkData = Object.entries(data).reduce((accumulator, currVal) => {
+      const [dataType, data] = currVal;
+      return {
+        ...accumulator,
+        [dataType]: data.filter((row) => row["name_2"] === selectedPark),
+      };
+    }, {});
+  }
+
+  const finalData = selectedPark === "all" ? data : selectedParkData;
+
+  const hierarchy = generateHierarchy(finalData, ["gender"]);
 
   const group = (d) => d.id.split(".")[0];
   const name = (d) => d.id.split(".")[1];
