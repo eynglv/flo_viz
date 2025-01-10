@@ -1,6 +1,6 @@
 import "@asymmetrik/leaflet-d3";
 import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
-import { useState, useEffect, useRef, forwardRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -25,8 +25,8 @@ const BaseMap = ({
   const censusData = data.census;
 
   const mapRef = useRef(null);
+  const mapContainerRef = useRef();
   const containerRef = useRef();
-  const wrapperRef = useRef();
 
   const [openModal, setOpenModal] = useState(false);
   const [modalPark, setModalPark] = useState(null);
@@ -78,12 +78,11 @@ const BaseMap = ({
     };
 
     const ctx = gsap.context(() => {
-      gsap.to(containerRef.current, {
-        // y: 0,
+      gsap.to(mapContainerRef.current, {
         scrollTrigger: {
-          trigger: containerRef.current,
+          trigger: mapContainerRef.current,
           start: "50% 50%",
-          end: "+=100 top",
+          end: "+=3000 top",
           toggleActions: "play pause resume reset",
           scrub: true,
           pin: "#pinElement",
@@ -92,16 +91,16 @@ const BaseMap = ({
           markers: true,
         },
       });
-    }, wrapperRef);
+    }, containerRef);
 
     return () => ctx.revert();
   }, [coords]);
 
   //   useGSAP(
   //     () => {
-  //       if (containerRef.current) {
+  //       if (mapContainerRef.current) {
   //         ScrollTrigger.create({
-  //           trigger: containerRef.current,
+  //           trigger: mapContainerRef.current,
   //           start: "50% 50%",
   //           end: "+=100 top",
   //           toggleActions: "play pause resume reset",
@@ -114,31 +113,33 @@ const BaseMap = ({
   //       }
   //     },
   //   {
-  //     scope: wrapperRef,
-  //     dependencies: [containerRef.current],
+  //     scope: containerRef,
+  //     dependencies: [mapContainerRef.current],
   //   }
   //   );
 
-  //   useGSAP(() => {
-  //     gsap.to("#firstSentence", {
-  //       y: -window.innerHeight,
-  //       duration: 1,
-  //       ease: "power2.out",
-  //       scrollTrigger: {
-  //         trigger: containerRef.current,
-  //         start: "200px 23%",
-  //         toggleActions: "play pause resume reset",
-  //         markers: true,
-  //         scrub: true,
-  //         id: "sentence",
-  //       },
-  //     });
-  //   });
+  useGSAP(() => {
+    gsap.to("#firstSentence", {
+      y: -window.innerHeight,
+      duration: 3,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: mapContainerRef.current,
+        start: "50% 50%",
+        // half of map end length
+        end: "+=1500 top",
+        toggleActions: "play pause resume reset",
+        markers: true,
+        scrub: true,
+        id: "sentence",
+      },
+    });
+  });
 
   return (
-    <div className='w-full h-screen flex justify-between' ref={wrapperRef}>
-      <div className='h-screen w-full' id='pinElement'>
-        <div className='w-2/3 h-screen flex' ref={containerRef}>
+    <div className='w-full h-screen flex justify-between' ref={containerRef}>
+      <div className='h-screen w-full flex' id='pinElement'>
+        <div className='w-2/3 h-screen flex' ref={mapContainerRef}>
           <MapContainer
             center={stateCoords[state]}
             zoom={12}
@@ -185,48 +186,48 @@ const BaseMap = ({
           <div className='mr-3' />
           {legend && <Legend />}
         </div>
-        {/* <div className='w-1/3 self-end translate-y-full' id='firstSentence'>
-        <div className='h-1/3'>
-          <p className='text-2xl px-4'>
-            Around Central Park, Olmsted's first project, white households
-            represent a majority of the micro-neighborhoods in which the park is
-            a 10 minute walk away.
-          </p>
-          <DotDistribution
-            data={distributionData}
-            state='NYC'
-            selectedPark={"Central Park"}
-            layers={["race"]}
-            legend={false}
-          />
+        <div className='w-1/3 self-end translate-y-full' id='firstSentence'>
+          <div className='mb-[400px]' id='hello'>
+            <p className='text-2xl px-4'>
+              Around Central Park, Olmsted's first project, white households
+              represent a majority of the micro-neighborhoods in which the park
+              is a 10 minute walk away.
+            </p>
+            <DotDistribution
+              data={distributionData}
+              state='NYC'
+              selectedPark={"Central Park"}
+              layers={["race"]}
+              legend={false}
+            />
+          </div>
+          <div className='mb-[400px]' id='bye'>
+            <p className='text-2xl px-4'>
+              Prospect Park, in comparison, sees a more even ratio of white to
+              people of color.
+            </p>
+            <DotDistribution
+              data={distributionData}
+              state='NYC'
+              selectedPark={"Prospect Park"}
+              layers={["race"]}
+              legend={false}
+            />
+          </div>
+          {/* <div>
+            <p className='text-2xl px-4'>
+              Nearby, Sunset Park, is one of 4 parks where more people of color
+              reside.
+            </p>
+            <DotDistribution
+              data={distributionData}
+              state='NYC'
+              selectedPark={"Sunset Park"}
+              layers={["race"]}
+              legend={false}
+            />
+          </div> */}
         </div>
-        <div>
-          <p className='text-2xl px-4'>
-            Prospect Park, in comparison, sees a more even ratio of white to
-            people of color.
-          </p>
-          <DotDistribution
-            data={distributionData}
-            state='NYC'
-            selectedPark={"Prospect Park"}
-            layers={["race"]}
-            legend={false}
-          />
-        </div>
-        <div>
-          <p className='text-2xl px-4'>
-            Nearby, Sunset Park, is one of 4 parks where more people of color
-            reside.
-          </p>
-          <DotDistribution
-            data={distributionData}
-            state='NYC'
-            selectedPark={"Sunset Park"}
-            layers={["race"]}
-            legend={false}
-          />
-        </div> */}
-        {/* </div> */}
         {openModal && (
           <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
             <DotDistribution
