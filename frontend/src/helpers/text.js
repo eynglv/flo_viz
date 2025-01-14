@@ -14,7 +14,34 @@ export const introduction = {
 
 
 export const newYorkText = {
-    '1': <p className="text-3xl">
-        Olmsted began his park designing career in New York, and in his life completed 9 other park projects in the city.
-    </p>
+    0: {
+        text: <p className='text-xl px-4 text-white'>
+            Around <span className="font-bold"> Central Park</span>, Olmsted's first project, white households
+            represent a majority of the micro-neighborhoods for which the park
+            is a 10 minute walk.
+        </p>,
+    },
+    1: {
+        text: <p className='text-xl px-4 text-white'>
+            <span className="font-bold">Prospect Park</span>, in comparison, sees a more even ratio of white to
+            people of color.
+        </p>,
+    },
+    2: {
+        text: <p className='text-xl px-4 text-white'>
+            Nearby, <span className="font-bold">Sunset Park</span>, is one of his 4 NYC parks that's surrounded by neighborhoods with predominantly residents of color.
+        </p>,
+    },
+    3: {
+        text: <p className='text-xl px-4 text-white'>
+            According to Trust the Public Land's research, the average distance most people are willing to walk to reach a destination is 10-minutes or roughly half a mile...
+        </p>,
+        showTitle: 'bottom'
+    },
+    4: {
+        text: <p className='text-xl px-4 text-white'>
+            ...but policies like racial segregation, redlining, and exclusionary zoning in the US have created a significant <span className="font-bold italic">park equity gap</span>: neighborhoods with predominantly low-income, people of color have access to fewer parks than neighborhoods with predominantly white, affluent residents.
+        </p>,
+        showTitle: 'bottom'
+    }
 }

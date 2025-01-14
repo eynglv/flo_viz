@@ -6,10 +6,9 @@ import {
   sexCategories,
   referencer,
   adjustedAgeBins,
-  layers,
+  adjustedIncomeBins,
 } from "../helpers/constants";
 
-// Helper functions
 const filterRelevantData = (data, referenceKey, reference) => {
   return data.reduce((accumulator, currVal) => {
     const { id, TRACTCE: tract } = currVal;
@@ -31,6 +30,35 @@ const filterRelevantData = (data, referenceKey, reference) => {
   }, {});
 };
 
+const convertToAdjustedBins = (data, adjustedIncomeBin) => {
+  const result = {};
+  for (const [key, incomeData] of Object.entries(data)) {
+    const adjustedBins = {
+      "income.low_income": 0,
+      "income.median_income": 0,
+      "income.high_income": 0,
+    };
+
+    // Aggregate values into the new bins
+    for (const [incomeKey, value] of Object.entries(incomeData)) {
+      const incomeCategory = incomeKey.replace("income.", "");
+
+      if (adjustedIncomeBin.low_income.includes(incomeCategory)) {
+        adjustedBins["income.low_income"] += value;
+      } else if (adjustedIncomeBin.median_income.includes(incomeCategory)) {
+        adjustedBins["income.median_income"] += value;
+      } else if (adjustedIncomeBin.high_income.includes(incomeCategory)) {
+        adjustedBins["income.high_income"] += value;
+      }
+    }
+
+    // Store the aggregated result for the current key
+    result[key] = adjustedBins;
+  }
+
+  return result;
+};
+
 const findKeyIntersection = (dataset) => {
   if (dataset.length === 0) return [];
 
@@ -46,7 +74,11 @@ const capitalizeFirstLetter = (str) => {
 };
 
 // Data Wrangling
-const generateHierarchy = (data, categories = ["income", "race", "gender"]) => {
+const generateHierarchy = (
+  data,
+  categories = ["income", "race", "gender"],
+  adjustedIncomeBin
+) => {
   const incomeKeys = Object.keys(incomeCategories);
   const raceKeys = Object.keys(raceCategories);
   const genderKeys = Object.keys(sexCategories);
@@ -120,6 +152,10 @@ const generateHierarchy = (data, categories = ["income", "race", "gender"]) => {
         return [id, recalculatedValues];
       })
     );
+    convertedIncomeValues = convertToAdjustedBins(
+      convertedIncomeValues,
+      adjustedIncomeBin
+    );
   }
 
   const aggregateData = [];
@@ -180,7 +216,10 @@ const DotDistribution = ({
   margin = 20,
   state,
   selectedPark = "all",
-  layer,
+  layers,
+  legend = true,
+  showTopTitle = false,
+  showBottomTitle = false,
 }) => {
   const ref = useRef();
 
@@ -199,7 +238,11 @@ const DotDistribution = ({
 
   const finalData = selectedPark === "all" ? data : selectedParkData;
 
-  const hierarchy = generateHierarchy(finalData, ["gender"]);
+  const hierarchy = generateHierarchy(
+    finalData,
+    layers,
+    adjustedIncomeBins[state]
+  );
 
   const group = (d) => d.id.split(".")[0];
   const name = (d) => d.id.split(".")[1];
@@ -239,36 +282,48 @@ const DotDistribution = ({
         return displayName;
       })
       .attr("dy", "0.3em")
-      .style("font-size", (d) => `${Math.min(d.r / 3, 13)}px`)
+      .style("font-size", (d) => `30px`)
       .style("fill", "#fff")
       .style("text-anchor", "middle")
-      .attr("clip-path", (d) => `circle(${d.r})`);
+      .attr("clip-path", (d) => `circle(${d.r})`)
+      .style("font-family", "serif");
 
     node
       .append("text")
       .text((d) => d.value.toLocaleString())
       .attr("x", 0)
       .attr("y", "2em")
-      .style("font-size", "10px")
-      .style("fill", "#fff");
+      .style("font-size", "28px")
+      .style("fill", "#fff")
+      .style("font-family", "serif");
   }, [color, height, hierarchy, margin, width]);
 
   return (
-    <div className='w-full h-full flex flex-col items-center'>
+    <div className='w-full h-full flex flex-col'>
+      {showTopTitle && (
+        <h1 className='text-center text-base text-green-100'>{selectedPark}</h1>
+      )}
       <svg width={width} height={height} ref={ref} />
-      <div className='w-3/4 flex justify-center'>
-        {Object.entries(referencer).map(([key, values]) => {
-          const { color } = values;
-          return (
-            <div key={key} className='flex flex-wrap items-center'>
-              <div className='w-4 h-4' style={{ backgroundColor: color }} />
-              <div className='mr-1' />
-              <p className='text-center'>{capitalizeFirstLetter(key)}</p>
-              <div className='mr-4' />
-            </div>
-          );
-        })}
-      </div>
+      {showBottomTitle && (
+        <h1 className='text-center text-base text-green-100'>{selectedPark}</h1>
+      )}
+      {legend && (
+        <div className='w-3/4 flex flex-col align-center'>
+          {Object.entries(referencer).map(([key, values]) => {
+            const { color } = values;
+            return (
+              <div key={key} className='flex flex-wrap items-center'>
+                <div className='w-4 h-4' style={{ backgroundColor: color }} />
+                <div className='mr-1' />
+                <p className='text-center text-slate-950'>
+                  {capitalizeFirstLetter(key)}
+                </p>
+                <div className='mr-4' />
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

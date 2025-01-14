@@ -32,6 +32,12 @@ export const incomeCategories = {
     '200_or_more': "$200,000 or more"
 }
 
+export const adjustedIncomeCategories = {
+    low_income: "Low Income",
+    median_income: "Median Income",
+    high_income: "High Income"
+}
+
 export const sexCategories = {
     "total_female_population": "Female",
     "total_male_population": "Male",
@@ -87,7 +93,64 @@ export const adjustedAgeBins = {
 
 export const referencer = {
     'race': { category: raceCategories, color: "#5778a4" },
-    'income': { category: incomeCategories, color: "#e49444" },
+    'income': { category: adjustedIncomeCategories, color: "#e49444" },
     'gender': { category: sexCategories, color: "#d1615d" },
     'age': { category: ageCategories, color: "#85b6b2" }
 }
+
+
+
+export const medianIncomeReferencer = {
+    Buffalo: { 'low': 36037, 'high': 60062, 'median': 48050 },
+    Georgia: { 'low': 61453, 'high': 102422, 'median': 81938 },
+    Illinois: { 'low': 56350, 'high': 93917, 'median': 75134 },
+    Kentucky: { 'low': 48548, 'high': 80913, 'median': 64731 },
+    Massachusetts: { 'low': 71066, 'high': 118443, 'median': 94755 },
+    NYC: { 'low': 59784, 'high': 99641, 'median': 79713 },
+    Rochester: { 'low': 34971, 'high': 58285, 'median': 46628 },
+    Wisconsin: { 'low': 38916, 'high': 64860, 'median': 51888 },
+}
+
+export const adjustedIncomeBins = {
+    Buffalo: {
+        low_income: ['less_than_10', '10_to_14', '15_to_24', '25_to_34'],
+        median_income: ['35_to_49', '50_to_74'],
+        high_income: ['75_to_99', '100_to_149', '150_to_199', '200_or_more']
+    },
+    Georgia: {
+        low_income: ['less_than_10', '10_to_14', '15_to_24', '25_to_34', '35_to_49'],
+        median_income: ['50_to_74', '75_to_99'],
+        high_income: ['100_to_149', '150_to_199', '200_or_more']
+    },
+    Illinois: {
+        low_income: ['less_than_10', '10_to_14', '15_to_24', '25_to_34', '35_to_49'],
+        median_income: ['50_to_74', '75_to_99'],
+        high_income: ['100_to_149', '150_to_199', '200_or_more']
+    },
+    Kentucky: {
+        low_income: ['less_than_10', '10_to_14', '15_to_24', '25_to_34'],
+        median_income: ['35_to_49', '50_to_74'],
+        high_income: ['75_to_99', '100_to_149', '150_to_199', '200_or_more']
+    },
+    Massachusetts: {
+        low_income: ['less_than_10', '10_to_14', '15_to_24', '25_to_34', '35_to_49'],
+        median_income: ['50_to_74', '75_to_99', '100_to_149'],
+        high_income: ['150_to_199', '200_or_more']
+    },
+    NYC: {
+        low_income: ['less_than_10', '10_to_14', '15_to_24', '25_to_34', '35_to_49'],
+        median_income: ['50_to_74', '75_to_99'],
+        high_income: ['100_to_149', '150_to_199', '200_or_more']
+    },
+    Rochester: {
+        low_income: ['less_than_10', '10_to_14', '15_to_24', '25_to_34'],
+        median_income: ['35_to_49', '50_to_74'],
+        high_income: ['75_to_99', '100_to_149', '150_to_199', '200_or_more']
+    },
+    Wisconsin: {
+        low_income: ['less_than_10', '10_to_14', '15_to_24', '25_to_34'],
+        median_income: ['35_to_49', '50_to_74'],
+        high_income: ['75_to_99', '100_to_149', '150_to_199', '200_or_more']
+    }
+};
+
