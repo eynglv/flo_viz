@@ -11,35 +11,26 @@ export const HomeProvider = ({ children }) => {
     useEffect(() => {
         const states = Object.keys(coords);
         const fileNames = ['race_data.csv', 'income_data.csv', 'age_data.csv'];
-        const state = 'Rochester' //temp
 
         const fetchAllData = async () => {
             try {
                 const data = {};
-                for (const fileName of fileNames) {
-                    const nominalName = fileName.split('.')[0]
-                    const censusResponse = await fetch(`http://localhost:5050/api/data?state=${state}&file=${fileName}`);
+                for (const state of states) {
 
-                    if (censusResponse.ok) {
-                        const censusData = await censusResponse.json();
-                        data[state] = {
-                            ...data[state], [nominalName]: censusData
-                        };
-                    } else {
-                        throw new Error(`Failed to fetch data for ${state}`);
+                    for (const fileName of fileNames) {
+                        const nominalName = fileName.split('.')[0]
+                        const censusResponse = await fetch(`http://localhost:5050/api/data?state=${state}&file=${fileName}`);
+
+                        if (censusResponse.ok) {
+                            const censusData = await censusResponse.json();
+                            data[state] = {
+                                ...data[state], [nominalName]: censusData
+                            };
+                        } else {
+                            throw new Error(`Failed to fetch data for ${state}`);
+                        }
                     }
                 }
-
-                // for (const state of states) {
-                //     const censusResponse = await fetch(`http://localhost:5050/api/data?state=${state}&file=${fileName}`);
-
-                //     if (censusResponse.ok) {
-                //         const parks = await censusResponse.json();
-                //         data[state] = { parks };
-                //     } else {
-                //         throw new Error(`Failed to fetch data for ${state}`);
-                //     }
-                // }
                 setCensusData(data);
             } catch (err) {
                 setError(err.message);
@@ -57,3 +48,4 @@ export const HomeProvider = ({ children }) => {
 }
 
 export const useHome = () => useContext(HomeContext)
+
