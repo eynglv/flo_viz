@@ -198,7 +198,7 @@ const TransitionMap = ({
             const parkName = sorted[index].properties.name;
             return (
               <div
-                className={`h-[${mapHeight}px] ml-6 mb-20 bg-gray-800/50 rounded`}
+                className={`h-[${mapHeight}px] ml-6 mb-20`}
                 key={`${parkName}-text`}
                 id='text-block'
               >
@@ -207,7 +207,7 @@ const TransitionMap = ({
                   data={distributionData}
                   state='NYC'
                   selectedPark={parkName}
-                  layers={["race"]}
+                  layers={["race", "income"]}
                   legend={false}
                   showBottomTitle={showTitle === "bottom"}
                   showTopTitle={showTitle === "top"}
@@ -221,14 +221,14 @@ const TransitionMap = ({
               const { name } = properties;
               return (
                 <div
-                  className={`h-[${mapHeight}px] ml-6 mb-10 bg-gray-800/50 rounded`}
+                  className={`h-[${mapHeight}px] ml-6 mb-10`}
                   key={`${name}-text`}
                 >
                   <DotDistribution
                     data={distributionData}
                     state='NYC'
                     selectedPark={name}
-                    layers={["race"]}
+                    layers={["race", "income"]}
                     legend={false}
                     showTopTitle
                   />

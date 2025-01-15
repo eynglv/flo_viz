@@ -277,6 +277,7 @@ const DotDistribution = ({
 
   useEffect(() => {
     const svgElement = d3.select(ref.current);
+    svgElement.selectAll("*").remove(); // Clear previous content
 
     const root = d3
       .pack()
