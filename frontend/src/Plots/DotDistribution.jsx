@@ -9,6 +9,17 @@ import {
   adjustedIncomeBins,
 } from "../helpers/constants";
 
+const filterUniqueGEOID = (data) => {
+  const seen = new Set();
+  return data.filter((item) => {
+    if (seen.has(item.GEOID)) {
+      return false;
+    }
+    seen.add(item.GEOID);
+    return true;
+  });
+};
+
 const filterRelevantData = (data, referenceKey, reference) => {
   return data.reduce((accumulator, currVal) => {
     const { id, TRACTCE: tract } = currVal;
@@ -77,17 +88,30 @@ const capitalizeFirstLetter = (str) => {
 const generateHierarchy = (
   data,
   categories = ["income", "race", "gender"],
-  adjustedIncomeBin
+  adjustedIncomeBin,
+  selectedPark,
+  state
 ) => {
   const incomeKeys = Object.keys(incomeCategories);
   const raceKeys = Object.keys(raceCategories);
   const genderKeys = Object.keys(sexCategories);
 
+  const { income_data, race_data, age_data } = data;
+
+  const filteredData =
+    selectedPark === "all"
+      ? {
+          income_data: filterUniqueGEOID(income_data),
+          race_data: filterUniqueGEOID(race_data),
+          age_data: filterUniqueGEOID(age_data),
+        }
+      : { income_data, race_data, age_data };
+
   const {
     income_data: incomeData,
     race_data: raceData,
     age_data: ageData,
-  } = data;
+  } = filteredData;
 
   let genderReferencer,
     incomeReferencer,
@@ -191,7 +215,7 @@ const generateHierarchy = (
 
   const sumValues = intersection.reduce((accumulator, currVal) => {
     for (const key in currVal) {
-      if (key !== "totalPopulation") {
+      if (key !== "totalPopulation" && !isNaN(currVal[key])) {
         accumulator[key] =
           (parseFloat(accumulator[key]) || 0) + parseFloat(currVal[key]);
       }
@@ -223,7 +247,7 @@ const DotDistribution = ({
 }) => {
   const ref = useRef();
 
-  const data = fullData[state];
+  let data = fullData[state];
   let selectedParkData;
 
   if (selectedPark !== "all") {
@@ -241,7 +265,9 @@ const DotDistribution = ({
   const hierarchy = generateHierarchy(
     finalData,
     layers,
-    adjustedIncomeBins[state]
+    adjustedIncomeBins[state],
+    selectedPark,
+    state
   );
 
   const group = (d) => d.id.split(".")[0];
