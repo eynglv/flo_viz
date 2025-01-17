@@ -6,9 +6,12 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { coords as stateCoords } from "../helpers/constants";
+import { DotDensity, DotDistribution } from "../plots";
+import Modal from "./Modal";
+import BubbleContent from "../content/BubbleContent";
 
 const useZoomLevel = (setZoomLevel) => {
   useMapEvents({
@@ -21,8 +24,13 @@ const useZoomLevel = (setZoomLevel) => {
 
 const MainMap = ({ mapsData, censusData }) => {
   const mapRef = useRef();
+  //   set custom zoom options
   const [zoomLevel, setZoomLevel] = useState(6);
-  console.log(zoomLevel);
+  const [state, setState] = useState(null);
+  const [selectedPark, setSelectedPark] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+
+  const focusedStateData = useMemo(() => mapsData[state], [mapsData, state]);
 
   return (
     <div className='w-full h-full'>
@@ -43,19 +51,69 @@ const MainMap = ({ mapsData, censusData }) => {
         />
         <ZoomLevel setZoomLevel={setZoomLevel} />
         {zoomLevel < 12 && (
-          <CustomMarker
-            onClick={(target) => {
-              const { lat, lng } = target.latlng;
-              mapRef.current.flyTo([lat, lng], 14, {
-                animate: true,
-                duration: 1,
-              });
-            }}
-            setZoomLevel={setZoomLevel}
-            zoomLevel={zoomLevel}
-          />
+          <div>
+            {Object.entries(stateCoords).map(([state, coords]) => {
+              return (
+                <CustomMarker
+                  onClick={(target) => {
+                    const { lat, lng } = target.latlng;
+                    mapRef.current.flyTo([lat, lng], 12, {
+                      animate: true,
+                      duration: 1,
+                    });
+                    setState(state);
+                  }}
+                  setZoomLevel={setZoomLevel}
+                  zoomLevel={zoomLevel}
+                  state={state}
+                  coords={coords}
+                  key={state}
+                />
+              );
+            })}
+          </div>
+        )}
+        {zoomLevel >= 12 && (
+          <div>
+            <GeoJSON
+              data={focusedStateData.parks}
+              style={{
+                color: "#660000",
+                weight: 2,
+                opacity: "85%",
+              }}
+              pointToLayer={() => null}
+              onEachFeature={(feature, layer) => {
+                if (
+                  (feature.geometry.type === "Polygon" ||
+                    feature.geometry.type === "MultiPolygon") &&
+                  feature.properties.name
+                ) {
+                  layer.bindTooltip(feature.properties.name, {
+                    direction: "center",
+                    permanent: true,
+                  });
+
+                  layer.on("click", () => {
+                    setOpenModal(true);
+                    setSelectedPark(feature.properties.name);
+                  });
+                }
+              }}
+            />
+            <DotDensity data={focusedStateData.census} />
+          </div>
         )}
       </MapContainer>
+      {openModal && (
+        <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
+          <BubbleContent
+            censusData={censusData}
+            state={state}
+            selectedPark={selectedPark}
+          />
+        </Modal>
+      )}
     </div>
   );
 };
@@ -64,7 +122,7 @@ const ZoomLevel = ({ setZoomLevel }) => {
   return <div>{useZoomLevel(setZoomLevel)}</div>;
 };
 
-const CustomMarker = ({ onClick, zoomLevel }) => {
+const CustomMarker = ({ onClick, zoomLevel, coords, state }) => {
   const defaultIcon = L.icon({
     iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
     shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
@@ -75,23 +133,16 @@ const CustomMarker = ({ onClick, zoomLevel }) => {
   });
 
   return (
-    <div>
-      {Object.entries(stateCoords).map(([state, coords]) => {
-        return (
-          <Marker
-            position={coords}
-            key={state}
-            icon={defaultIcon}
-            eventHandlers={{
-              click: onClick,
-            }}
-            style={{
-              display: zoomLevel >= 12 ? "none" : "block",
-            }}
-          />
-        );
-      })}
-    </div>
+    <Marker
+      position={coords}
+      icon={defaultIcon}
+      eventHandlers={{
+        click: onClick,
+      }}
+      style={{
+        display: zoomLevel >= 12 ? "none" : "block",
+      }}
+    />
   );
 };
 
