@@ -230,7 +230,7 @@ const TransitionMap = ({
                     selectedPark={name}
                     layers={["race", "income"]}
                     legend={false}
-                    showTopTitle
+                    showTopTitle={name}
                   />
                 </div>
               );

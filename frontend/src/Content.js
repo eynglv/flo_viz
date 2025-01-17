@@ -1,22 +1,20 @@
 import { Step, Scrollama } from "react-scrollama";
-import { useState, useRef } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 
 import Home from "./content/Home";
 import AnimatedMap from "./components/AnimatedMap/AnimatedMap";
 import { useMaps } from "./useMaps";
 import { useHome } from "./useHome";
 import { introduction, newYorkText } from "./helpers/text";
-import { BaseMap } from "./plots";
-import Try from "./Try";
+import { BaseMap, StackedBarChart, DotDistribution, BoxPlot } from "./plots";
+import TransitionMap from "./TransitionMap";
+import MainMap from "./components/MainMap";
 
 const Content = () => {
     const [currentStepIndex, setCurrentStepIndex] = useState(null);
 
     const { mapsData, loading, error } = useMaps();
     const { censusData, loading: censusLoading, error: censusError } = useHome()
-
-    const animatedMapRef = useRef()
-
 
     const onStepEnter = ({
         // element, // The DOM node of the step that was triggered
@@ -74,34 +72,39 @@ const Content = () => {
                         ))}
                     </Scrollama>
                 </div>
-                <AnimatedMap parksData={mapsData["NYC"].parks} ref={animatedMapRef} />
+                <AnimatedMap parksData={mapsData["NYC"].parks} />
             </div>
             {/* The next section */}
             <div className='flex flex-col flex-1'>
-                <Scrollama offset={0.5} onStepEnter={onStepEnter} debug >
+                <Scrollama offset={0.5} onStepEnter={onStepEnter} >
                     <Step data='1'>
                         <div className="h-[200px]">
                             <p className="text-3xl">
-                                Olmsted began his park designing career in New York and in his life completed 9 other park projects in the city. This is the racial distribution of the neighborhoods that are within a 10 minute walk from his parks.
+                                {/* TODO CHANGE THE LAST SENTENCE */}
+                                Olmsted began his park designing career in <span className="font-bold">New York </span> and in his life completed 9 other park projects in the city. This is the racial distribution of the neighborhoods that are within a 10 minute walk from his parks.
                             </p>
                         </div>
                     </Step>
                     <Step data='2'>
                         <div>
-                            <Try data={mapsData['NYC']} state="NYC" />
-                            {/* <BaseMap data={mapsData['NYC']} state="NYC" /> */}
+                            <TransitionMap data={mapsData['NYC']} state="NYC" distributionData={censusData} />
                         </div>
                     </Step>
                     <Step data='3'>
-                        <div className="h-[790px]" />
-                    </Step>
-                    <Step data='4'>
-                        <div className="h-[500px]">
-                            <p className="text-3xl">
-                                Olmsted began his park designing career in New York and in his life completed 9 other park projects in the city. This is the racial distribution of the neighborhoods that are within a 10 minute walk from his parks.
-                            </p>
+                        <div className="mt-[1000px] w-full h-screen pb-5">
+                            <MainMap mapsData={mapsData} censusData={censusData} />
                         </div>
                     </Step>
+                    {/* <Step data='3'>
+                        <div className={`mt-[1000px]`}>
+                            <div className="flex">
+                                <BaseMap data={mapsData['Georgia']} state="Georgia" />
+                                <div className="w-1/2">
+                                    <DotDistribution data={censusData} state={"NYC"} legend={false} layers={["race"]} />
+                                </div>
+                            </div>
+                        </div>
+                    </Step> */}
                 </Scrollama>
             </div>
         </div>

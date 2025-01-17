@@ -89,8 +89,7 @@ const generateHierarchy = (
   data,
   categories = ["income", "race", "gender"],
   adjustedIncomeBin,
-  selectedPark,
-  state
+  selectedPark
 ) => {
   const incomeKeys = Object.keys(incomeCategories);
   const raceKeys = Object.keys(raceCategories);
@@ -266,9 +265,9 @@ const DotDistribution = ({
     finalData,
     layers,
     adjustedIncomeBins[state],
-    selectedPark,
-    state
+    selectedPark
   );
+  // console.log(hierarchy);
 
   const group = (d) => d.id.split(".")[0];
   const name = (d) => d.id.split(".")[1];
@@ -296,7 +295,7 @@ const DotDistribution = ({
 
     node
       .append("circle")
-      .attr("fill-opacity", 0.7)
+      // .attr("fill-opacity", 0.7)
       .attr("fill", (d) => color(group(d.data)))
       .attr("r", (d) => d.r);
 
@@ -326,31 +325,39 @@ const DotDistribution = ({
   }, [color, height, hierarchy, margin, width]);
 
   return (
-    <div className='w-full h-full flex flex-col'>
-      {showTopTitle && (
+    <div className='h-[90%] flex flex-col'>
+      {typeof showTopTitle === "string" ? (
         <h1 className='text-center text-base text-green-100'>{selectedPark}</h1>
+      ) : (
+        showTopTitle
       )}
       <svg width={width} height={height} ref={ref} />
-      {showBottomTitle && (
-        <h1 className='text-center text-base text-green-100'>{selectedPark}</h1>
-      )}
-      {legend && (
-        <div className='w-3/4 flex flex-col align-center'>
-          {Object.entries(referencer).map(([key, values]) => {
-            const { color } = values;
-            return (
-              <div key={key} className='flex flex-wrap items-center'>
-                <div className='w-4 h-4' style={{ backgroundColor: color }} />
-                <div className='mr-1' />
-                <p className='text-center text-slate-950'>
-                  {capitalizeFirstLetter(key)}
-                </p>
-                <div className='mr-4' />
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <div className='w-full flex justify-between'>
+        {/* {legend && (
+          <div className='flex flex-col align-center'>
+            {Object.entries(referencer).map(([key, values]) => {
+              const { color } = values;
+              return (
+                <div key={key} className='flex flex-wrap items-center'>
+                  <div className='w-4 h-4' style={{ backgroundColor: color }} />
+                  <div className='mr-1' />
+                  <p className='text-center text-slate-950'>
+                    {capitalizeFirstLetter(key)}
+                  </p>
+                  <div className='mr-4' />
+                </div>
+              );
+            })}
+          </div>
+        )} */}
+        {showBottomTitle === "string" ? (
+          <h1 className='text-center text-base text-green-100'>
+            {selectedPark}
+          </h1>
+        ) : (
+          showBottomTitle
+        )}
+      </div>
     </div>
   );
 };

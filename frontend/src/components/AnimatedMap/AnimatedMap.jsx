@@ -5,7 +5,6 @@ import "./animatedMap.css";
 
 const AnimatedMap = ({ parksData }) => {
   const mapRef = useRef(null);
-  // TODO disable dragging
 
   useEffect(() => {
     if (mapRef.current) {
@@ -86,6 +85,7 @@ const AnimatedMap = ({ parksData }) => {
         scrollWheelZoom={false}
         zoomControl={false}
         doubleClickZoom={false}
+        dragging={false}
       >
         <TileLayer
           url='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
