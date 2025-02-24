@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   incomeCategories,
   raceCategories,
@@ -8,6 +8,7 @@ import {
   adjustedAgeBins,
   adjustedIncomeBins,
 } from "../helpers/constants";
+import { useMap } from "react-leaflet";
 
 const filterUniqueGEOID = (data) => {
   const seen = new Set();
@@ -267,16 +268,30 @@ const DotDistribution = ({
     adjustedIncomeBins[state],
     selectedPark
   );
-  // console.log(hierarchy);
 
   const group = (d) => d.id.split(".")[0];
   const name = (d) => d.id.split(".")[1];
 
   const color = d3.scaleOrdinal(d3.schemeTableau10);
 
+  const totalPopulation = useMemo(() => {
+    if (hierarchy) {
+      return Object.values(hierarchy).reduce((accumulator, currVal) => {
+        const { id, value } = currVal;
+        const label = id.split(".")[0];
+        if (accumulator[label]) {
+          accumulator[label] += value;
+        } else {
+          accumulator[label] = value;
+        }
+        return accumulator;
+      }, {});
+    }
+  }, [hierarchy]);
+
   useEffect(() => {
     const svgElement = d3.select(ref.current);
-    svgElement.selectAll("*").remove(); // Clear previous content
+    svgElement.selectAll("*").remove();
 
     const root = d3
       .pack()
@@ -316,13 +331,18 @@ const DotDistribution = ({
 
     node
       .append("text")
-      .text((d) => d.value.toLocaleString())
+      .text((d) => {
+        const label = d.data.id.split(".")[0];
+        const total = totalPopulation[label];
+        const percentage = ((Number(d.value) / total) * 100).toFixed(2);
+        return `${percentage}%`;
+      })
       .attr("x", 0)
       .attr("y", "2em")
       .style("font-size", "28px")
       .style("fill", "#fff")
       .style("font-family", "serif");
-  }, [color, height, hierarchy, margin, width]);
+  }, [color, height, hierarchy, margin, totalPopulation, width]);
 
   return (
     <div className='h-[90%] flex flex-col'>
@@ -333,23 +353,6 @@ const DotDistribution = ({
       )}
       <svg width={width} height={height} ref={ref} />
       <div className='w-full flex justify-between'>
-        {/* {legend && (
-          <div className='flex flex-col align-center'>
-            {Object.entries(referencer).map(([key, values]) => {
-              const { color } = values;
-              return (
-                <div key={key} className='flex flex-wrap items-center'>
-                  <div className='w-4 h-4' style={{ backgroundColor: color }} />
-                  <div className='mr-1' />
-                  <p className='text-center text-slate-950'>
-                    {capitalizeFirstLetter(key)}
-                  </p>
-                  <div className='mr-4' />
-                </div>
-              );
-            })}
-          </div>
-        )} */}
         {showBottomTitle === "string" ? (
           <h1 className='text-center text-base text-green-100'>
             {selectedPark}

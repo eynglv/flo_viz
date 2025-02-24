@@ -17,8 +17,7 @@ export const newYorkText = {
     0: {
         text: <p className='text-xl p-4 text-white bg-gray-800/50 rounded'>
             Around <span className="font-bold"> Central Park</span>, Olmsted's first project, white households
-            represent a majority of the micro-neighborhoods for which the park
-            is a 10 minute walk.
+            represent a majority of the micro-neighborhoods for which the park is a 10 minute walk.
         </p>,
     },
     1: {
@@ -34,13 +33,13 @@ export const newYorkText = {
     },
     3: {
         text: <p className='text-xl p-4 text-white bg-gray-800/50 rounded'>
-            According to Trust the Public Land's research, the average distance most people are willing to walk to reach a destination is 10-minutes or roughly half a mile...
+
         </p>,
         showTitle: 'bottom'
     },
     4: {
         text: <p className='text-xl p-4 text-white bg-gray-800/50 rounded'>
-            ...but policies like racial segregation, redlining, and exclusionary zoning in the US have created a significant <span className="font-bold italic">park equity gap</span>: neighborhoods with predominantly low-income, people of color have access to fewer parks than neighborhoods with predominantly white, affluent residents.
+
         </p>,
         showTitle: 'bottom'
     }

@@ -1,7 +1,5 @@
 import React from "react";
 
-import { referencer } from "../helpers/constants";
-
 export const Pill = ({ option, isActive, onClick }) => {
   const { label, value } = option;
   const pillColors = {
