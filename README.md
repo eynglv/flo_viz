@@ -37,20 +37,3 @@ This interactive geospatial application evaluates park equity gaps across Freder
    npm i
    npm run start
    ```
-
-## Usage
-
-- Navigate to the application in your browser.
-- Explore the interactive map to analyze park equity gaps.
-
-## Contributing
-
-Contributions are welcome! Please submit a pull request with your proposed changes.
-
-## License
-
-This project is licensed under the MIT License.
-
-## Contact
-
-For inquiries or collaborations, please reach out via [your contact information].
